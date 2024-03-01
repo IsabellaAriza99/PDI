@@ -103,3 +103,11 @@
     }
   ]
 }
+
+Para los mapas de campo, debemos agregar un campo "intendedFor” para mostrar que estos mapas de campo deben usarse con su adquisición de resonancia magnética funcional.
+
+Ahora ya podemos correr el programa
+
+a. `dcm2bids –help` nos da información de la sintaxis
+
+b. `dcm2bids -d sourcedata/dcm_qa_nih/In/ -p ID01 -c code/dcm2bids_config.json --auto_extract_entities`

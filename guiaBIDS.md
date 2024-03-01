@@ -1,14 +1,14 @@
 # Guía de uso DCM2BIDS
 
 ## 1. Instalar dcm2niix
-   a. `py -m pip install dcm2niix`
+   `py -m pip install dcm2niix`
 
 ## 2. Instalar dcm2bids
-   a. `Py -m pip install dcm2bids`
+   `py -m pip install dcm2bids`
 
 ## 3. Añadir la ruta donde se almacenan los ejecutables a el path – la añadimos a las variables de entorno.
-   a. `C:\Users\DRA01\AppData\Local\Programs\Python\Python311\Scripts`
-      En esta ruta se guardan los ejecutables de dcm2bids y dcm2niix.
+   `C:\Users\DRA01\AppData\Local\Programs\Python\Python311\Scripts`
+   En esta ruta se guardan los ejecutables de dcm2bids y dcm2niix.
 
 ## 4. Creamos una carpeta para almacenar la información y crear la estructura bids
    a. `mkdir dcm2bids-tutorial`
@@ -37,4 +37,69 @@
    
    Nos vamos a enfocar solo en estas 3 adquisiciones:
    1. 004_In_DCM2NIIX_regression_test_20180918114023
-   2. 003_In_EPI
+   2. 003_In_EPI_PE=AP_20180918121230
+   3. 004_In_EPI_PE=PA_20180918121230
+   
+   La primera es una adquisición de resonancia magnética funcional en estado de reposo, mientras que la segunda y la tercera son EPI de mapa de campo.
+   
+   - Puedo revisar las diferencias entre los archivos 2 y 3
+   
+   `fc 003_In_EPI_PE=AP_20180918121230.json 004_In_EPI_PE=PA_20180918121230.json`
+   
+   Idealmente nos debemos fijar en un campo especifico, el comando anterior nos entrega demasiadas información, entonces en este caso nos enfocamos en un campo “seriesDescription”.
+   
+   4. Por ejemplo vamos a fijarnos en el campo “seriesDescription” de la imagen 004_In_DCM2NIIX_regression_test_20180918114023
+   
+   Para esto, revisamos la información que hay dentro del archivo de metadatos asociado a esa imagen por medio del comando:
+   
+   `type 004_In_DCM2NIIX_regression_test_20180918114023.json`
+   
+   Encontramos que en “seriesDescription” está el valor “Axial EPI-FMRI (Interleaved I to S)", entonces para filtrar este tipo de imagen en el archivo de configuración podríamos usar el valor “Axial EPI-FMRI*”
+   
+   b. `findstr "Axial EPI-FMRI" tmp_dcm2bids/helper/*.json`
+   
+   La idea es solo encontrar una coincidencia, pero este caso tenemos 4, entonces tenemos que mejorar nuestro filtro, podríamos probar con la expresión completa, es decir: “Axial EPI-FMRI (Interleaved I to S)"
+   
+   Si volvemos a buscar:
+   
+   c. `findstr /C:"Axial EPI-FMRI (Interleaved I to S)" tmp_dcm2bids/helper/*.json`
+   
+   Ahora que tenemos una coincidencia única sabemos como filtrar en nuestro archivo de configuración.
+   
+   Pasando a los mapas de campo, si inspeccionamos los archivos secundarios (los mismos que se compararon en la sección dcm2bids_helper), puede ver un patrón de "EPI PE=AP", "EPI PE=PA", "EPI PE=RL"y "EPI PE=LR en el campo "SeriesDescription"
+   
+   En nuestra carpeta code vamos a guardar nuestro archivo de configuración, usualmente se nombra “dcm2bids_config.json”
+   
+   Creamos el archivo de configuración por consola:
+   
+   d. `echo { "descriptions": [] } > code\dcm2bids_config.json`
+   
+   Ahora, modificamos el archivo .json así:
+
+```json
+{
+  "descriptions": [
+    {
+      "id": "id_task-rest",
+      "datatype": "func",
+      "suffix": "bold",
+      "custom_entities": "task-rest",
+      "criteria": {
+        "SeriesDescription": "Axial EPI-FMRI (Interleaved I to S)*"
+      },
+      "sidecar_changes": {
+        "TaskName": "rest"
+      }
+    },
+    {
+      "datatype": "fmap",
+      "suffix": "epi",
+      "criteria": {
+        "SeriesDescription": "EPI PE=*"
+      },
+      "sidecar_changes": {
+        "intendedFor": ["id_task-rest"]
+      }
+    }
+  ]
+}

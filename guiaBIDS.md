@@ -6,7 +6,7 @@
 ## 2. Instalar dcm2bids
    `py -m pip install dcm2bids`
 
-## 3. Añadir la ruta donde se almacenan los ejecutables a el path – la añadimos a las variables de entorno.
+## 3. Añadir la ruta al path – La añadimos a las variables de entorno.
    En esta ruta se guardan los ejecutables de dcm2bids y dcm2niix.
 
    `C:\Users\DRA01\AppData\Local\Programs\Python\Python311\Scripts`

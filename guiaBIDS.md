@@ -103,6 +103,7 @@
     }
   ]
 }
+```
 
 Para los mapas de campo, debemos agregar un campo "intendedFor” para mostrar que estos mapas de campo deben usarse con su adquisición de resonancia magnética funcional.
 

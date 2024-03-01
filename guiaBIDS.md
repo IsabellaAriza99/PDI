@@ -56,7 +56,7 @@
    
    Idealmente nos debemos fijar en un campo especifico, el comando anterior nos entrega demasiadas información, entonces en este caso nos enfocamos en un campo “seriesDescription”.
    
-   4. Por ejemplo vamos a fijarnos en el campo “seriesDescription” de la imagen 004_In_DCM2NIIX_regression_test_20180918114023
+   Por ejemplo vamos a fijarnos en el campo “seriesDescription” de la imagen 004_In_DCM2NIIX_regression_test_20180918114023
    
    Para esto, revisamos la información que hay dentro del archivo de metadatos asociado a esa imagen por medio del comando:
    
